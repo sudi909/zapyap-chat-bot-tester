@@ -1,0 +1,13 @@
+{
+  "name": "zapyap-bot-tester",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A bot you can press buttons at, for poking the bot surfaces by hand.",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "setup": "node setup.js",
+    "start": "node --env-file=.env server.js",
+    "send": "node --env-file=.env send.js"
+  }
+}
