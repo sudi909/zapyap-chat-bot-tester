@@ -18,9 +18,9 @@ Three files, no dependencies. Node 18+ has everything they use.
 
 ## The one thing that will catch you out
 
-**The chat server will not deliver to `localhost` out of the box.** `Bots.Egress`
-refuses private, loopback and link-local addresses — that check is the SSRF
-defence, and it is on by default in every environment.
+**The chat server will not deliver to `localhost` out of the box.** It refuses
+private, loopback and link-local addresses — that check is the SSRF defence,
+and it is on by default in every environment.
 
 There are two ways round it, and the second needs no tunnel.
 
@@ -50,21 +50,15 @@ ngrok http 3000
 That URL is your `EVENT_URL`. This is what Slack and Discord both require, and
 it is the right answer for anything shared.
 
-### Or: the dev flags
+### Or: allow it in local dev
 
-In the chat server's `config/dev.exs`, BOTH of these — the first permits plain
-http, the second permits private addresses:
+A development server can be configured to permit both plain http and private
+addresses; see the chat server's own configuration docs for the two settings.
+With both on, `EVENT_URL=http://localhost:3000` works directly.
 
-```elixir
-config :zapyap_chat, :bot_delivery,
-  allow_insecure: true,
-  allow_private_addresses: true
-```
-
-Then `EVENT_URL=http://localhost:3000` works directly. Development only: the
-second flag switches off the check that stops a bot's event URL reaching your
-database, your cache, or a cloud metadata endpoint. `config/runtime.exs` never
-reads either, so a release cannot acquire them from the environment.
+Development only. The second of them switches off the check that stops a bot's
+event URL reaching your database, your cache, or a cloud metadata endpoint —
+and a production release cannot pick either up from the environment.
 
 `send.js` needs neither — it calls the chat server, not the other way round, so
 the webhook half works against `localhost` with nothing in front of it.
@@ -164,6 +158,5 @@ records `http_401`. Twenty consecutive failures disable the bot; re-enable with
 - **Signature verification on the way IN.** This bot verifies what it receives;
   it does not exercise the identity webhook, which shares the scheme.
 
-The full reference is `docs/bots-and-webhooks.md` in the chat server repo
-(`zapyap-chat-messaging-server`) — §3 for webhooks, §8 commands, §9 buttons,
-§10 DMs.
+The full reference lives with the chat server's own documentation, in its
+sections on webhooks, commands, buttons and DMs.
